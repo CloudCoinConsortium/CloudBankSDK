@@ -17,20 +17,41 @@
  *
  */
 
+namespace CloudBank;
 
-namespace CloudBank\HTTPClient;
+use CloudBank\CloudBankException;
+use CloudBank\Logger;
+
+class DepositStackResponse extends CloudBankResponse {
+
+	public $server;
+
+	public $status;
+
+	private $receipt;
+
+	public $message;
+
+	public $time;
 
 
-interface HTTPClientInterface {
+	public function __construct() {
+
+	}
+
+	public function __set($k, $v) {
+		if ($k == "receipt" && $v) {
+			Logger::debug("Receipt $v");
+			$this->receipt = $v;
+		}
+	}
+
+	public function __get($k) {
+		if ($k == "receipt")
+			return $this->receipt;
+	}
 
 
-	public function send($url, $body = "", array $headers = []);
-
-	public function setTimeout($timeout);
-
-	public function setBaseURL($url);
-
-	public function setProcessResponseFunc($func);
 }
 
 

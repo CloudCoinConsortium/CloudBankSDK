@@ -17,20 +17,42 @@
  *
  */
 
+namespace CloudBank;
 
-namespace CloudBank\HTTPClient;
+use CloudBank\CloudBankException;
+use CloudBank\Logger;
 
 
-interface HTTPClientInterface {
+class Validator {
+
+	function __construct() {
+	}
 
 
-	public function send($url, $body = "", array $headers = []);
+	public function digit($data, $min, $max) {
+		return $data >= $min && $data <= $max;
+	}
 
-	public function setTimeout($timeout);
+	public function amount($data) {
+		return $this->digit($data, 0, PHP_INT_MAX);
+	}
 
-	public function setBaseURL($url);
+	public function email($data) {
+		return filter_var($data, FILTER_VALIDATE_EMAIL);
+	}
 
-	public function setProcessResponseFunc($func);
+	public function checkID($data) {
+		return preg_match("/^[A-Za-z0-9]{4,32}$/", $data);
+	}
+
+	public function sendType($data) {
+		return in_array($data, ["json", "email", "url", "download", "sms"]);
+	}
+
+	public function phoneNumber($data) {
+		return preg_match("/^\d{5,18}$/", $data);
+	}
+
 }
 
 

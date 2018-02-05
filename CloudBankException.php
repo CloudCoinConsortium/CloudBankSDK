@@ -17,7 +17,7 @@
  *
  */
 
-namespace CloudCoinBank;
+namespace CloudBank;
 
 
 class CloudBankException extends \Exception {

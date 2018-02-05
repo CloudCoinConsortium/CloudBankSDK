@@ -17,10 +17,10 @@
  *
  */
 
-namespace CloudCoinBank\HTTPClient;
+namespace CloudBank\HTTPClient;
 
-use CloudCoinBank\CloudBankException;
-use CloudCoinBank\Logger;
+use CloudBank\CloudBankException;
+use CloudBank\Logger;
 
 class HTTPClientFactory {
 

@@ -17,7 +17,7 @@
  *
  */
 
-namespace CloudCoinBank;
+namespace CloudBank;
 
 class Logger {
 	const MSGTYPE_ERROR = 0;

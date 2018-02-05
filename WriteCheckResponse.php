@@ -17,20 +17,24 @@
  *
  */
 
+namespace CloudBank;
 
-namespace CloudBank\HTTPClient;
+use CloudBank\CloudBankException;
+use CloudBank\Logger;
 
+class WriteCheckResponse extends CloudBankResponse {
 
-interface HTTPClientInterface {
+	public $bank_server;
 
+	public $status;
 
-	public function send($url, $body = "", array $headers = []);
+	public $message;
 
-	public function setTimeout($timeout);
+	public $time;
 
-	public function setBaseURL($url);
+	public function __construct() {
 
-	public function setProcessResponseFunc($func);
+	}
 }
 
 

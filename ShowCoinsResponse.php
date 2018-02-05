@@ -17,20 +17,39 @@
  *
  */
 
+namespace CloudBank;
 
-namespace CloudBank\HTTPClient;
+use CloudBank\CloudBankException;
+use CloudBank\Logger;
 
+class ShowCoinsResponse extends CloudBankResponse {
 
-interface HTTPClientInterface {
+	public $bank_server;
 
+	public $status;
 
-	public function send($url, $body = "", array $headers = []);
+	public $message;
 
-	public function setTimeout($timeout);
+	public $time;
 
-	public function setBaseURL($url);
+	public $ones, $fives, $twentyfives, $hundreds, $twohundredfifties;
 
-	public function setProcessResponseFunc($func);
+	public function __construct() {
+		$this->ones = $this->fives = $this->twentyfives = $this->hundreds = $this->twohundredfifties = 0;
+	}
+	
+	public function getTotalCoins() {
+		return $this->ones + $this->fives + $this->twentyfives + $this->hundreds + $this->twohundredfifties;
+	}
+
+	public function getTotal() {
+		return $this->ones + $this->fives * 5 
+			+ $this->twentyfives * 25
+			+ $this->hundreds *100
+			+ $this->twohundredfifties * 250;
+
+	}
+
 }
 
 

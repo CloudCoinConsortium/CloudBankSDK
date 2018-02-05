@@ -17,20 +17,32 @@
  *
  */
 
+namespace CloudBank;
 
-namespace CloudBank\HTTPClient;
+use CloudBank\CloudBankException;
+use CloudBank\Logger;
+
+class CloudBankResponse {
+
+	protected $status;
+
+	public function __construct() {
+
+	}
+
+	public function isError() {
+		if (strtolower($this->status) == "error")
+			return true;
+
+		if (strtolower($this->status) == "fail")
+			return true;
+
+		return false;
+	}
 
 
-interface HTTPClientInterface {
 
 
-	public function send($url, $body = "", array $headers = []);
-
-	public function setTimeout($timeout);
-
-	public function setBaseURL($url);
-
-	public function setProcessResponseFunc($func);
 }
 
 

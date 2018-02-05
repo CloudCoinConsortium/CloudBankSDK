@@ -21,8 +21,10 @@ if (version_compare(PHP_VERSION, '5.4.0', '<')) {
 	throw new Exception('This SDK requires PHP version 5.4 or higher.');
 }
 
+date_default_timezone_set("UTC");
+
 spl_autoload_register(function($class) {
-	$prefix = "CloudCoinBank";
+	$prefix = "CloudBank";
  
 	$baseDir = __DIR__;
 

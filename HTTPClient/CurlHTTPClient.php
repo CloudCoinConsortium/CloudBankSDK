@@ -18,15 +18,15 @@
  */
 
 
-namespace CloudCoinBank\HTTPClient;
+namespace CloudBank\HTTPClient;
 
-use CloudCoinBank\CloudBankException;
-use CloudCoinBank\Logger;
+use CloudBank\CloudBankException;
+use CloudBank\Logger;
 
 class CurlHTTPClient implements HTTPClientInterface {
 
 	const CURL_DEFAULT_TIMEOUT = 10;
-	const CURL_DEFAULT_CONTENT = "application/json";
+	const CURL_DEFAULT_CONTENT = "application/x-www-form-urlencoded";
 
 	private $timeout;
 
@@ -36,7 +36,7 @@ class CurlHTTPClient implements HTTPClientInterface {
 
 	private $verifyCert = true;
 
-	private $baseURL;
+	private $url, $baseURL;
 
 	private $response;
 	private $responseCode;
@@ -49,12 +49,14 @@ class CurlHTTPClient implements HTTPClientInterface {
 		if (!$this->timeout)
 			$this->setTimeout(self::CURL_DEFAULT_TIMEOUT);
 
+		$this->url = $url;
 		$this->method = $body ? "POST" : "GET";
 			
 		if ($this->baseURL)
 			$url = $this->baseURL . "/$url";
 
-		Logger::debug("Connecting to $url");
+		
+		Logger::debug("Connecting to $url [{$this->method}]");
 		if ($body)
 			Logger::debug(print_r($body, true));
 
@@ -62,17 +64,20 @@ class CurlHTTPClient implements HTTPClientInterface {
 		if (!$this->curl) 
 			throw new CloudBankException("Failed to initialize CURL");
 
+		$hArray = [];
+		foreach ($headers as $header => $value) 
+			$hArray[] = "$header: $value";
+
 		if ($this->method == "POST") {
 			if (!isset($headers['Content-Type'])) 
-				$headers['Content-Type'] = self::CURL_DEFAULT_CONTENT;
+				$hArray[] = "Content-Type: " . self::CURL_DEFAULT_CONTENT;
 
 			if (!isset($headers['Content-Length']))
-				$headers['Content-Length'] = strlen($body);
+				$hArray[] = "Content-Length: " . strlen($body);
 
 		}
 
-		foreach ($headers as $header)
-			curl_setopt($this->curl, CURLOPT_HTTPHEADER, $header);
+		curl_setopt($this->curl, CURLOPT_HTTPHEADER, $hArray);
 
 		curl_setopt($this->curl, CURLOPT_URL, $url);
 		curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, 1);
@@ -87,9 +92,13 @@ class CurlHTTPClient implements HTTPClientInterface {
 		curl_setopt($this->curl, CURLOPT_CONNECTTIMEOUT, $this->timeout);
 		curl_setopt($this->curl, CURLOPT_TIMEOUT, $this->timeout);
 
+		//curl_setopt($this->curl, CURLOPT_VERBOSE, true);
+
 		if ($body)
 			curl_setopt($this->curl, CURLOPT_POSTFIELDS, $body);
 
+
+		curl_setopt($this->curl, CURLOPT_POST, true);
 		curl_setopt($this->curl, CURLOPT_HEADER, true);
 
 		$this->response = curl_exec($this->curl);
@@ -159,7 +168,7 @@ class CurlHTTPClient implements HTTPClientInterface {
 
 		if ($this->prFunc) {
 			$prFunc = $this->prFunc;
-			$this->responseBody = $prFunc($this->rawBody);
+			$this->responseBody = $prFunc($this->rawBody, $this->url);
 		}
 
 	}

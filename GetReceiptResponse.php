@@ -17,20 +17,26 @@
  *
  */
 
+namespace CloudBank;
 
-namespace CloudBank\HTTPClient;
+use CloudBank\CloudBankException;
+use CloudBank\Logger;
 
+class GetReceiptResponse extends CloudBankResponse {
 
-interface HTTPClientInterface {
+	public $bank_server;
 
+	public $status;
 
-	public function send($url, $body = "", array $headers = []);
+	public $message;
 
-	public function setTimeout($timeout);
+	public $time;
 
-	public function setBaseURL($url);
+	public $version;
 
-	public function setProcessResponseFunc($func);
+	public function __construct() {
+
+	}
 }
 
 
