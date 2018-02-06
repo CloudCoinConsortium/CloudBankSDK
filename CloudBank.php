@@ -39,7 +39,6 @@ class CloudBank {
 	public function __construct($config = []) {
 
 		$this->config = array_merge([
-			"id" => "",
 			"url" => "",
 			"debug" => false,
 			"privateKey" => ""

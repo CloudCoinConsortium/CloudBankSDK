@@ -34,9 +34,19 @@ class WithdrawStackResponse extends CloudBankResponse {
 
 	public $version;
 
-	public function __construct() {
+	public $cloudcoin;
 
+	public function __construct() {
+		$this->cloudcoin = [];
 	}
+
+	public function getStack() {
+		$data = @json_encode($this->cloudcoin);
+		$data = "{\"cloudcoin\":$data}";
+
+		return $data;
+	}
+
 }
 
 

@@ -47,7 +47,16 @@ class ShowCoinsResponse extends CloudBankResponse {
 			+ $this->twentyfives * 25
 			+ $this->hundreds *100
 			+ $this->twohundredfifties * 250;
+	}
 
+	public function getBulk() {
+		return [
+			"1" => $this->ones,
+			"5" => $this->fives,
+			"25" => $this->twentyfives,
+			"100" => $this->hundreds,
+			"250" => $this->twohundredfifties
+		];
 	}
 
 }

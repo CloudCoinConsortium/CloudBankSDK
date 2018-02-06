@@ -94,11 +94,10 @@ class CurlHTTPClient implements HTTPClientInterface {
 
 		//curl_setopt($this->curl, CURLOPT_VERBOSE, true);
 
-		if ($body)
+		
+		if ($body) 
 			curl_setopt($this->curl, CURLOPT_POSTFIELDS, $body);
 
-
-		curl_setopt($this->curl, CURLOPT_POST, true);
 		curl_setopt($this->curl, CURLOPT_HEADER, true);
 
 		$this->response = curl_exec($this->curl);

@@ -34,9 +34,30 @@ class GetReceiptResponse extends CloudBankResponse {
 
 	public $version;
 
-	public function __construct() {
+	public $receipt_id,
 
+	public $total_authentic, $total_fracked, $total_lost, $total_counterfeit;
+
+	public $receipt_detail;
+
+	public function __construct() {
+		$this->total_authentic = $this->total_fracked = $this->total_lost = $this->total_counterfeit = 0;
 	}
+
+	public function getTotal() {
+		return $this->total_authentic + $this->total_fracked + $this->total_lost + $this->total_counterfeit;
+	}
+
+	public function isValid() {
+		if ($this->total_counterfeit > 0 || $this->total_lost > 0)
+			return false;
+
+		if ($this->total_authentic > 0 || $this->total_fracked > 0)
+			return true;
+
+		return false;
+	}
+
 }
 
 
