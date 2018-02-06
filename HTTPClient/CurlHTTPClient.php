@@ -92,8 +92,8 @@ class CurlHTTPClient implements HTTPClientInterface {
 		curl_setopt($this->curl, CURLOPT_CONNECTTIMEOUT, $this->timeout);
 		curl_setopt($this->curl, CURLOPT_TIMEOUT, $this->timeout);
 
+		curl_setopt($this->curl, CURLINFO_HEADER_OUT, true);
 		//curl_setopt($this->curl, CURLOPT_VERBOSE, true);
-
 		
 		if ($body) 
 			curl_setopt($this->curl, CURLOPT_POSTFIELDS, $body);
@@ -110,6 +110,9 @@ class CurlHTTPClient implements HTTPClientInterface {
 		if (!$info) {
 			throw new CloudBankException("Failed to obtain CURL info");
 		}
+
+		$requestHeaders = curl_getinfo($this->curl, CURLINFO_HEADER_OUT);
+		Logger::debug("Request: " . print_r($requestHeaders, true));
 
 		$this->responseCode = $info['http_code'];
 		curl_close($this->curl);

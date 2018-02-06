@@ -34,7 +34,7 @@ class GetReceiptResponse extends CloudBankResponse {
 
 	public $version;
 
-	public $receipt_id,
+	public $receipt_id;
 
 	public $total_authentic, $total_fracked, $total_lost, $total_counterfeit;
 
