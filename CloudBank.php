@@ -171,6 +171,10 @@ class CloudBank {
 		if (!$by) 
 			throw new CloudBankException("Payer is not specifed");
 
+		$payto = urlencode($payto);
+		$by = urlencode($by);
+		$memo = urlencode($memo);
+
 		$url = "write_check.aspx";
 
 		$params = $this->getPK();
