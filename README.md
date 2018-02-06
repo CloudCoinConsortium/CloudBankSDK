@@ -7,22 +7,16 @@ https://github.com/worthingtonse/Bank
 
 SDK implements the following services:
 
+```php
 getVersion()
-
 printWelcome()
-
 echoRAIDA()
-
 depositStack()
-
 withdrawStack()
-
 getReceipt()
-
 writeCheck()
-
 getCashCheckURL()
-
+```
 
 
 *Basic usage:*
