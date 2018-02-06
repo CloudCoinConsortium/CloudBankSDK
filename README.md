@@ -4,16 +4,26 @@ SDK helps to accept CloudCoins on any website. It uses CloudBank protocol to tal
 
 https://github.com/worthingtonse/Bank
 
+
 SDK implements the following services:
 
 getVersion()
+
 printWelcome()
+
 echoRAIDA()
+
 depositStack()
+
 withdrawStack()
+
 getReceipt()
+
 writeCheck()
+
 getCashCheckURL()
+
+
 
 *Basic usage:*
 
