@@ -44,7 +44,7 @@ try {
 		$receiptResonse = $ccb->getReceipt($receiptNumber);
 		if (!$receiptResonse->isValid()) {
 			updateReceipt($receiptNumber, "counterfeit");
-			die("Counterfeit stack" . print_r($receiptResonse->receipt_detail));
+			die("Counterfeit stack" . print_r($receiptResonse->receipt, true));
 		}
 
 		updateReceipt($receiptNumber, "authentic");

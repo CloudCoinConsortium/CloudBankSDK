@@ -24,7 +24,7 @@ use CloudBank\Logger;
 
 class DepositStackResponse extends CloudBankResponse {
 
-	public $server;
+	public $bank_server;
 
 	public $status;
 

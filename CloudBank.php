@@ -91,7 +91,7 @@ class CloudBank {
 			"print_welcome" => "WelcomeResponse",
 			"echo"		=> "EchoRAIDAResponse",
 			"import_one_stack" => "DepositStackResponse",
-			"deposit" 	=> "DepositStackResponse",
+			"deposit_one_stack" 	=> "DepositStackResponse",
 			"get_receipt"	=> "GetReceiptResponse",
 			"show_coins"	=> "ShowCoinsResponse",
 			"withdraw_one_stack" => "WithdrawStackResponse",
@@ -114,8 +114,7 @@ class CloudBank {
 	public function depositStack($stack, $rn = null) {
 		Logger::debug("Deposit Stack");
 
-		//$url = "import_one_stack.aspx";
-		$url = "deposit.aspx";
+		$url = "deposit_one_stack.aspx";
 		if ($rn)
 			$url .= "?rn=$rn";
 
@@ -136,12 +135,13 @@ class CloudBank {
 		if (!$this->validator->sendType($format))
 			throw new CloudBankException("Invalid format. Must be one of 'json','email','url'");
 
+		if (!$tag)
+			$tag = @rand(10, 65535);
 
-		$url = "export_one_stack.aspx";
+		$url = "withdraw_account.aspx";
+
 		$params = "amount=$amount&sendby=$format";
-		if ($tag)
-			$params .= "&tag=$tag";
-
+		$params .= "&tag=$tag";
 		$params .= "&" . $this->getPK();
 		
 		$withdrawStackResponse = $this->client->send($url, $params);

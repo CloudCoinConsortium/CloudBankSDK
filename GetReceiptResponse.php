@@ -38,7 +38,7 @@ class GetReceiptResponse extends CloudBankResponse {
 
 	public $total_authentic, $total_fracked, $total_lost, $total_counterfeit;
 
-	public $receipt_detail;
+	public $receipt;
 
 	public function __construct() {
 		$this->total_authentic = $this->total_fracked = $this->total_lost = $this->total_counterfeit = 0;
@@ -46,6 +46,10 @@ class GetReceiptResponse extends CloudBankResponse {
 
 	public function getTotal() {
 		return $this->total_authentic + $this->total_fracked + $this->total_lost + $this->total_counterfeit;
+	}
+
+	public function getTotalValid() {
+		return $this->total_authentic + $this->total_fracked;
 	}
 
 	public function isValid() {
