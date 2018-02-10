@@ -67,7 +67,7 @@ class CloudBank {
 				throw new CloudBankException("Failed to parse JSON: " . $jsonLastError);
 			}
 
-			$url = preg_replace("/\/?(.+)\.(aspx|php)?(\?.*)?$/", "$1", $url);
+			$url = preg_replace("/\/?(.+?)(\?.*)?$/", "$1", $url);
 			if (!isset($rmappings[$url])) {
 				Logger::debug(print_r($rmappings, true));
 				throw new CloudBankException("Invalid response format for $url");
@@ -83,7 +83,6 @@ class CloudBank {
 
 
 		$this->validator = new Validator();
-	//	$rv = $this->client->send("/print_welcome.aspx");
 	}
 
 	private function setResponseMappings() {
@@ -94,19 +93,19 @@ class CloudBank {
 			"deposit_one_stack" 	=> "DepositStackResponse",
 			"get_receipt"	=> "GetReceiptResponse",
 			"show_coins"	=> "ShowCoinsResponse",
-			"withdraw_one_stack" => "WithdrawStackResponse",
+			"withdraw_account" => "WithdrawStackResponse",
 			"write_check"	=> "WriteCheckResponse"
 		];
 	}
 
 	public function printWelcome() {
-		$welcomeResponse = $this->client->send("print_welcome.aspx");
+		$welcomeResponse = $this->client->send("print_welcome");
 
 		return $welcomeResponse;
 	}
 
 	public function echoRAIDA() {
-		$echoRAIDAResponse = $this->client->send("echo.aspx");
+		$echoRAIDAResponse = $this->client->send("echo");
 
 		return $echoRAIDAResponse;
 	}
@@ -114,7 +113,7 @@ class CloudBank {
 	public function depositStack($stack, $rn = null) {
 		Logger::debug("Deposit Stack");
 
-		$url = "deposit_one_stack.aspx";
+		$url = "deposit_one_stack";
 		if ($rn)
 			$url .= "?rn=$rn";
 
@@ -138,7 +137,7 @@ class CloudBank {
 		if (!$tag)
 			$tag = @rand(10, 65535);
 
-		$url = "withdraw_account.aspx";
+		$url = "withdraw_account";
 
 		$params = "amount=$amount&sendby=$format";
 		$params .= "&tag=$tag";
@@ -175,11 +174,11 @@ class CloudBank {
 		$by = urlencode($by);
 		$memo = urlencode($memo);
 
-		$url = "write_check.aspx";
+		$url = "write_check";
 
 		$params = $this->getPK();
 		$params .= "&action=email&amount=$amount&checkid=$checkId";
-		$params .= "&emailto=$email&payto=$payto&from=$fromemail&signby=$by&memo=$memo";
+		$params .= "&emailto=$email&payto=$payto&fromemail=$fromemail&signby=$by&memo=$memo";
 
 		$writeCheckResponse = $this->client->send($url, $params);
 
@@ -193,7 +192,7 @@ class CloudBank {
 		if (!$this->validator->sendType($format))
 			throw new CloudBankException("Invalid format. Must be one of 'json','email','url'");
 
-		$url = $this->config['url'] . "/checks.aspx?id=$checkId";
+		$url = $this->config['url'] . "/checks?id=$checkId";
 		$url .= "&receive=$format";
 
 		if ($format == "email" && !$this->validator->email($data))
@@ -212,7 +211,7 @@ class CloudBank {
 	public function getReceipt($rn) {
 		Logger::debug("Get Receipt $rn");
 
-		$url = "get_receipt.aspx?rn=$rn";
+		$url = "get_receipt?rn=$rn";
 
 		$getReceiptResponse = $this->client->send($url, $this->getPK());
 
@@ -222,7 +221,7 @@ class CloudBank {
 	public function showCoins() {
 		Logger::debug("Show coins");
 
-		$showCoinsResponse = $this->client->send("show_coins.aspx", $this->getPK());
+		$showCoinsResponse = $this->client->send("show_coins", $this->getPK());
 
 		return $showCoinsResponse;
 	}
