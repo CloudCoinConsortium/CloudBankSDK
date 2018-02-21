@@ -1,0 +1,26 @@
+{
+	"name": "cloudcoin/cloudbanksdk",
+	"description": "CloudBank SDK",
+	"keywords": ["cloudcoin", "cloudbank"],
+	"license": "MIT",
+	"type": "project",
+	"authors":      [
+	        {
+        	    "name":      "Alexander Miroch",
+	            "email":     "alexander.miroch@gmail.com"
+	        }
+	],
+	"require": {
+       		"php": ">=5.4.0"
+	},
+
+	"autoload": {
+		"psr-0": {
+			"CloudBank\\": "src/"
+		}
+	}
+
+	
+
+
+}

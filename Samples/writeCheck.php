@@ -1,6 +1,6 @@
 <?php
 
-require "CloudBank/autoload.php";
+require __DIR__ . "CloudBank/vendor/autoload.php";
 
 use CloudBank\CloudBank;
 use CloudBank\CloudBankException;
