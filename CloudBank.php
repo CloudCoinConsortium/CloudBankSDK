@@ -110,6 +110,13 @@ class CloudBank {
 		return $echoRAIDAResponse;
 	}
 
+	public function getStack($stackData) {
+
+		$stackObj = new Stack($stackData);
+
+		return $stackObj;
+	}
+
 	public function depositStack($stack, $rn = null) {
 		Logger::debug("Deposit Stack");
 
