@@ -29,6 +29,7 @@ getCashCheckURL()
 	$cBank = new CloudBank([
 		"url" => 'https://bank.cloudcoin.global/service',
 		"privateKey" => "1DECE3AF-43EC-435B-8C39-E2A5D0EA8677",
+		"account" => "myaccount@protonmail.com",
 		"debug" => false
 	]);
 

@@ -1,19 +1,21 @@
 <?php
 
-require __DIR__ . "CloudBank/vendor/autoload.php";
+require __DIR__ . "/CloudBank/vendor/autoload.php";
 
 use CloudBank\CloudBank;
 use CloudBank\CloudBankException;
 
 // Update receipt status in the Database
-function updateReceipt($receiptNumber, $status) {
+function updateReceipt($localReceiptID, $receiptNumber, $status) {
 	return true;
 }
 
 try {
 	$cBank = new CloudBank([
 		"url" => 'https://bank.cloudcoin.global/service',
-		"privateKey" => "1DECE3AF-43EC-435B-8C39-E2A5D0EA8677"
+		"privateKey" => "00000000000000000000000000000000",
+                "account" => "CloudCoin@Protonmail.com",
+                "debug" => "true"
 	]);
 
 	echo "CloudBank Version: " . $cBank->getVersion() . "\n";
@@ -21,12 +23,15 @@ try {
 	$echoResponse = $cBank->echoRAIDA();
 	if ($echoResponse->status == "ready") {
 
-		$stack = file_get_contents("/path/to/stackfile.json");
+		$stack = file_get_contents("e.stack");
 		if (!$stack)
 			die("Can not get stack file");
 
-		$receiptNumber = "ea22cbae0394f6c6918691f2e2f2e267";
-		$depositResponse = $cBank->depositStack($stack, $receiptNumber);
+		$localReceiptID = "r125";
+
+//		$receiptNumber = "ea22cbae0394f6c6918691f2e2f2e267";
+//		$depositResponse = $cBank->depositStack($stack, $receiptNumber);
+		$depositResponse = $cBank->depositStack($stack);
 
 		if ($depositResponse->isError()) {
 			updateReceipt($receiptNumber, "error");
@@ -35,15 +40,17 @@ try {
 
 		echo $depositResponse->message . "\n";
 
-		updateReceipt($reseiptNumber, $depositResponse->status);
+		$receiptNumber = $depositResponse->receipt;
+
+		updateReceipt($localReceiptID, $receiptNumber, $depositResponse->status);
 
 		// Wait for IMPORT. Better do it in a separate thread
 		echo "Waiting for import\n";
 		sleep(10);
 
-		$receiptResonse = $ccb->getReceipt($receiptNumber);
+		$receiptResonse = $cBank->getReceipt($receiptNumber);
 		if (!$receiptResonse->isValid()) {
-			updateReceipt($receiptNumber, "counterfeit");
+			updateReceipt($localReceiptID, $receiptNumber, "counterfeit");
 			die("Counterfeit stack" . print_r($receiptResonse->receipt, true));
 		}
 

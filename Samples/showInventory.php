@@ -1,14 +1,16 @@
 <?php
 
-require __DIR__ . "CloudBank/vendor/autoload.php";
+require __DIR__ . "/CloudBank/vendor/autoload.php";
 
 use CloudBank\CloudBank;
 use CloudBank\CloudBankException;
 
 try {
 	$cBank = new CloudBank([
-		"url" => 'https://bank.cloudcoin.global/service',
-		"privateKey" => "1DECE3AF-43EC-435B-8C39-E2A5D0EA8677"
+		"url" => 'https://bank.CloudCoin.global/service',
+		"privateKey" => "00000000000000000000000000000000",
+		"account" => "CloudCoin@Protonmail.com",
+		"debug" => "true"
 	]);
 
 	echo "CloudBank Version: " . $cBank->getVersion() . "\n";

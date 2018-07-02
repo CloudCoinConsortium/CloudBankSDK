@@ -41,7 +41,8 @@ class CloudBank {
 		$this->config = array_merge([
 			"url" => "",
 			"debug" => false,
-			"privateKey" => ""
+			"privateKey" => "",
+			"account" => ""
 		], $config);
 
 		if ($this->config['debug'])
@@ -54,6 +55,7 @@ class CloudBank {
 		}
 
 		$this->privateKey = $this->config['privateKey'];
+		$this->account = $this->config['account'];
 
 		$this->setResponseMappings();
 		$rmappings = $this->rmappings;
@@ -89,11 +91,10 @@ class CloudBank {
 		$this->rmappings = [
 			"print_welcome" => "WelcomeResponse",
 			"echo"		=> "EchoRAIDAResponse",
-			"import_one_stack" => "DepositStackResponse",
 			"deposit_one_stack" 	=> "DepositStackResponse",
 			"get_receipt"	=> "GetReceiptResponse",
 			"show_coins"	=> "ShowCoinsResponse",
-			"withdraw_account" => "WithdrawStackResponse",
+			"withdraw_one_stack" => "WithdrawStackResponse",
 			"write_check"	=> "WriteCheckResponse"
 		];
 	}
@@ -105,7 +106,9 @@ class CloudBank {
 	}
 
 	public function echoRAIDA() {
-		$echoRAIDAResponse = $this->client->send("echo");
+		$params = $this->getPK();
+
+		$echoRAIDAResponse = $this->client->send("echo?$params");
 
 		return $echoRAIDAResponse;
 	}
@@ -124,33 +127,25 @@ class CloudBank {
 		if ($rn)
 			$url .= "?rn=$rn";
 
-		$stack="stack=$stack";
+		$stack="account={$this->account}&stack=$stack";
 		
 		$depositStackResponse = $this->client->send($url, $stack);
 
 		return $depositStackResponse;
 	}
 
-	public function withdrawStack($amount, $format = "json", $tag = null) {
+	public function withdrawStack($amount) {
 		Logger::debug("Withdraw $amount CC");
 
 		$amount = intval($amount);
 		if (!$this->validator->amount($amount))
 			throw new CloudBankException("Invalid amount");
 
-		if (!$this->validator->sendType($format))
-			throw new CloudBankException("Invalid format. Must be one of 'json','email','url'");
+		$params = $this->getPK();
 
-		if (!$tag)
-			$tag = @rand(10, 65535);
+		$url = "withdraw_one_stack?amount=$amount&$params";
 
-		$url = "withdraw_account";
-
-		$params = "amount=$amount&sendby=$format";
-		$params .= "&tag=$tag";
-		$params .= "&" . $this->getPK();
-		
-		$withdrawStackResponse = $this->client->send($url, $params);
+		$withdrawStackResponse = $this->client->send($url);
 
 		return $withdrawStackResponse;
 	}
@@ -218,17 +213,20 @@ class CloudBank {
 	public function getReceipt($rn) {
 		Logger::debug("Get Receipt $rn");
 
-		$url = "get_receipt?rn=$rn";
+		$params = $this->getPK();
 
-		$getReceiptResponse = $this->client->send($url, $this->getPK());
+		$url = "get_receipt?rn=$rn&$params";
+
+		$getReceiptResponse = $this->client->send($url);
 
 		return $getReceiptResponse;
 	}
 
 	public function showCoins() {
 		Logger::debug("Show coins");
+		$params = $this->getPK();
 
-		$showCoinsResponse = $this->client->send("show_coins", $this->getPK());
+		$showCoinsResponse = $this->client->send("show_coins?$params");
 
 		return $showCoinsResponse;
 	}
@@ -238,7 +236,9 @@ class CloudBank {
 	}
 
 	private function getPK() {
-		return "pk=" . $this->privateKey;
+		$val = "account=" . $this->account . "&pk=" . $this->privateKey;
+
+		return $val;
 	}
 
 
