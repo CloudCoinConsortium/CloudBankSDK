@@ -42,7 +42,8 @@ class CloudBank {
 			"url" => "",
 			"debug" => false,
 			"privateKey" => "",
-			"account" => ""
+			"account" => "",
+			"timeout" => 0
 		], $config);
 
 		if ($this->config['debug'])
@@ -82,6 +83,9 @@ class CloudBank {
 
 			return $rObject;
 		});
+
+		if ($this->config['timeout'])
+			$this->client->setTimeout($this->config['timeout']);
 
 
 		$this->validator = new Validator();
