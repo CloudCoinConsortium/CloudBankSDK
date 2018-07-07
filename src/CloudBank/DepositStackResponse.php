@@ -34,6 +34,7 @@ class DepositStackResponse extends CloudBankResponse {
 
 	public $time;
 
+	public $change;
 
 	public function __construct() {
 

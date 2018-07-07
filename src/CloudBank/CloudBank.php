@@ -43,7 +43,7 @@ class CloudBank {
 			"debug" => false,
 			"privateKey" => "",
 			"account" => "",
-			"timeout" => 0
+			"timeout" => 30
 		], $config);
 
 		if ($this->config['debug'])
@@ -124,18 +124,79 @@ class CloudBank {
 		return $stackObj;
 	}
 
-	public function depositStack($stack, $rn = null) {
-		Logger::debug("Deposit Stack");
+	private function _doDepositStack($stack) {
+		$params = $this->getPK();
 
 		$url = "deposit_one_stack";
-		if ($rn)
-			$url .= "?rn=$rn";
-
-		$stack="account={$this->account}&stack=$stack";
+		$stack="$params&stack=$stack";
 		
 		$depositStackResponse = $this->client->send($url, $stack);
 
 		return $depositStackResponse;
+	}
+
+	private function checkCoinsAvailable($amount) {
+		$inventoryObj = $this->showCoins();
+		$inventory = $inventoryObj->getBulk();
+
+		print_r($inventory);
+
+		krsort($inventory);
+		foreach ($inventory as $denomination => $bankAmount) {
+			if ($amount >= $denomination && $bankAmount > 0) {
+				$sub = intval($amount / $denomination);
+				if ($sub > $bankAmount) 
+					$sub = $bankAmount;
+
+				$amount -= ($sub * $denomination);
+				if ($amount == 0)
+					break;
+			}
+		}
+
+		if ($amount != 0) 
+			return false;
+
+		return true;
+	}
+
+	public function depositStack($stack, $amount = null) {
+		Logger::debug("Deposit Stack");
+
+		if (is_null($amount)) 
+			return $this->_doDepositStack($stack);
+
+		$amount = intval($amount);
+		if ($amount <= 0) 
+			throw new CloudBankException("Invalid amount");
+
+		
+		$stackObj = new Stack($stack);
+		$changeTotal = $stackObj->getTotal() - $amount;
+		if ($changeTotal == 0)
+			return $this->_doDepositStack($stack);
+
+		if ($changeTotal < 0)
+			throw new CloudBankException("Amount is too big");
+
+		if (!$this->checkCoinsAvailable($changeTotal))
+			throw new CloudBankException("Not enough coins in the Bank");
+
+		$depositResponse = $this->_doDepositStack($stack);
+		if ($depositResponse->isError())
+			throw new CloudBankException("Failed to deposit coins");
+
+		Logger::debug("Deposit message: " . $depositResponse->message);
+		$receiptNumber = $depositResponse->receipt;
+
+		$receiptResponse = $this->getReceipt($receiptNumber);
+		if (!$receiptResponse->isValid()) 
+			throw new CloudBankException("The coins are counterfeit. Receipt #$receiptNumber");
+				
+		$withdrawStackResponse = $this->withdrawStack($changeTotal);
+		$depositResponse->change = $withdrawStackResponse->getStack();
+
+		return $depositResponse;
 	}
 
 	public function withdrawStack($amount) {
