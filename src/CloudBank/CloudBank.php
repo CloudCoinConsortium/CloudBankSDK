@@ -189,7 +189,8 @@ class CloudBank {
 
 		$receiptResponse = $this->getReceipt($receiptNumber);
 		if (!$receiptResponse->isValid()) 
-			throw new CloudBankException("The coins are counterfeit. Receipt #$receiptNumber");
+			return $depositResponse;
+		//	throw new CloudBankException("The coins are counterfeit. Receipt #$receiptNumber");
 				
 		$withdrawStackResponse = $this->withdrawStack($changeTotal);
 		$depositResponse->change = $withdrawStackResponse->getStack();
