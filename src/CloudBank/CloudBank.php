@@ -139,8 +139,6 @@ class CloudBank {
 		$inventoryObj = $this->showCoins();
 		$inventory = $inventoryObj->getBulk();
 
-		print_r($inventory);
-
 		krsort($inventory);
 		foreach ($inventory as $denomination => $bankAmount) {
 			if ($amount >= $denomination && $bankAmount > 0) {
